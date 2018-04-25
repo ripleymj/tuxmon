@@ -28,7 +28,7 @@
 #include <fml32.h>
 #include <tpadm.h>
 
-#include <ncurses.h>
+//include <ncurses.h>
 
 /*
  * Currently just 2 samples to calculate TPS,
@@ -597,7 +597,7 @@ error:
 
 static void cleanup()
 {
-    endwin();
+    //endwin();
     tpterm();
 }
 
@@ -651,14 +651,14 @@ int main(int argc, char *argv[])
 
     init_stats();
 
-    initscr();
+    //initscr();
     atexit(cleanup);
 
-    cbreak();
-    noecho();
-    curs_set(0);
+    //cbreak();
+    //noecho();
+    //curs_set(0);
 
-    nodelay(stdscr, TRUE);
+    //nodelay(stdscr, TRUE);
 
     while (1) {
         struct sample *l, *h;
@@ -672,17 +672,17 @@ int main(int argc, char *argv[])
         int rows, cols;
         char header[64];
 
-        while ((ch = getch()) != ERR) {
-            if (ch == 'q' || ch == 'Q') {
-                goto done;
-            } else if (ch == 's' || ch == 'S') {
-                server_sort_order = SORT_SERVICE;
-            } else if (ch == 'r' || ch == 'R') {
-                server_sort_order = SORT_REQ;
-            } else if (ch == 't' || ch == 'T') {
-                server_sort_order = SORT_TRX;
-            }
-        }
+        //while ((ch = getch()) != ERR) {
+        //    if (ch == 'q' || ch == 'Q') {
+        //        goto done;
+        //    } else if (ch == 's' || ch == 'S') {
+        //        server_sort_order = SORT_SERVICE;
+        //    } else if (ch == 'r' || ch == 'R') {
+        //        server_sort_order = SORT_REQ;
+        //    } else if (ch == 't' || ch == 'T') {
+        //        server_sort_order = SORT_TRX;
+        //    }
+        //}
 
         check(poll_mib(high) != -1, "");
 
@@ -692,9 +692,9 @@ int main(int argc, char *argv[])
         period = timestamp_diff(&l->timestamp, &h->timestamp);
         check(calculate_diff(l, h, period) != -1, "Failed to calculate server statistics");
 
-        erase();
+        //erase();
 
-        getmaxyx(stdscr, rows, cols);
+        //getmaxyx(stdscr, rows, cols);
         cols = cols;
 
         stat_rows = (rows - 6) / 2;
@@ -703,35 +703,54 @@ int main(int argc, char *argv[])
 
         row = 0;
 
-        attron(A_REVERSE);
-        move(row, 0); hline(' ', 80);
+        //attron(A_REVERSE);
+        //move(row, 0); hline(' ', 80);
         snprintf(header, sizeof(header), "%s : %s", h->machine.pmid, h->machine.lmid);
-        mvprintw(row++, 0,
-                "%-40s ACTIVE M: %-3ld  Q: %-3ld  S: %-3ld",
-                header, h->n_act_msgs, h->n_act_queues, h->n_act_servers);
-        attroff(A_REVERSE);
+        printf("%-40s ACTIVE M: %-3ld  Q: %-3ld  S: %-3ld\n", header, h->n_act_msgs, h->n_act_queues, h->n_act_servers);
+        //mvprintw(row++, 0,
+        //        "%-40s ACTIVE M: %-3ld  Q: %-3ld  S: %-3ld",
+        //        header, h->n_act_msgs, h->n_act_queues, h->n_act_servers);
+        //attroff(A_REVERSE);
 
-        mvprintw(row++, 0, "Queues:   % 5ld   Accessers: % 5ld   Req/s: % 9.2f   Trx/s: % 9.2f",
-                    h->machine.n_queues, h->machine.n_accessers,
-                    xpp(l->machine.n_req, h->machine.n_req, period),
-                    xpp(l->machine.n_tran, h->machine.n_tran, period)
-                );
-        mvprintw(row++, 0, "Servers:  % 5ld   Clients:   % 5ld   Enq/s: % 9.2f   Cmt/s: % 9.2f",
+        printf("Queues:   % 5ld   Accessers: % 5ld   Req/s: % 9.2f   Trx/s: % 9.2f\n",
+          h->machine.n_queues, h->machine.n_accessers,
+          xpp(l->machine.n_req, h->machine.n_req, period),
+          xpp(l->machine.n_tran, h->machine.n_tran, period)
+        );
+        //mvprintw(row++, 0, "Queues:   % 5ld   Accessers: % 5ld   Req/s: % 9.2f   Trx/s: % 9.2f",
+        //            h->machine.n_queues, h->machine.n_accessers,
+        //            xpp(l->machine.n_req, h->machine.n_req, period),
+        //            xpp(l->machine.n_tran, h->machine.n_tran, period)
+        //        );
+
+        printf("Servers:  % 5ld   Clients:   % 5ld   Enq/s: % 9.2f   Cmt/s: % 9.2f\n",
                     h->machine.n_servers, h->machine.n_clients,
                     xpp(l->machine.n_enqueue, h->machine.n_enqueue, period),
                     xpp(l->machine.n_trancmt, h->machine.n_trancmt, period)
                 );
-        mvprintw(row++, 0, "Services: % 5ld   GTT used:  % 5ld   Deq/s: % 9.2f   Abt/s: % 9.2f",
+        //mvprintw(row++, 0, "Servers:  % 5ld   Clients:   % 5ld   Enq/s: % 9.2f   Cmt/s: % 9.2f",
+        //            h->machine.n_servers, h->machine.n_clients,
+        //            xpp(l->machine.n_enqueue, h->machine.n_enqueue, period),
+        //            xpp(l->machine.n_trancmt, h->machine.n_trancmt, period)
+        //        );
+
+        printf("Services: % 5ld   GTT used:  % 5ld   Deq/s: % 9.2f   Abt/s: % 9.2f\n",
                     h->machine.n_services, h->machine.n_gtt,
                     xpp(l->machine.n_dequeue, h->machine.n_dequeue, period),
                     xpp(l->machine.n_tranabt, h->machine.n_tranabt, period)
                 );
+        //mvprintw(row++, 0, "Services: % 5ld   GTT used:  % 5ld   Deq/s: % 9.2f   Abt/s: % 9.2f",
+        //            h->machine.n_services, h->machine.n_gtt,
+        //            xpp(l->machine.n_dequeue, h->machine.n_dequeue, period),
+        //            xpp(l->machine.n_tranabt, h->machine.n_tranabt, period)
+        //        );
 
         row = queue_row;
-        attron(A_REVERSE);
-        move(row, 0); hline(' ', 80);
-        mvprintw(row++, 0, "MSQID     MSGS    %%FULL                  FROM       TO");
-        attroff(A_REVERSE);
+        //attron(A_REVERSE);
+        //move(row, 0); hline(' ', 80);
+        printf("MSQID     MSGS    %%FULL                  FROM       TO\n");
+        //mvprintw(row++, 0, "MSQID     MSGS    %%FULL                  FROM       TO");
+        //attroff(A_REVERSE);
 
         for (idx = 0, out_rows = 0; idx < h->n_queues; idx++) {
             char receiver[32], sender[32];
@@ -756,7 +775,7 @@ int main(int argc, char *argv[])
                 sender[0] = '\0';
             }
 
-            mvprintw(row, 0, "%-9ld  % 3ld  % 6.2f%%  %+20s %s %-20s",
+            printf("%-9ld  % 3ld  % 6.2f%%  %+20s %s %-20s\n",
                     h->queues[idx].msgid, 
                     h->queues[idx].qnum, 
                     h->queues[idx].used * 100.0,
@@ -764,6 +783,14 @@ int main(int argc, char *argv[])
                     strqtype(h->queues[idx].qtype),
                     receiver
                     );
+            //mvprintw(row, 0, "%-9ld  % 3ld  % 6.2f%%  %+20s %s %-20s",
+            //        h->queues[idx].msgid, 
+            //        h->queues[idx].qnum, 
+            //        h->queues[idx].used * 100.0,
+            //        sender,
+            //        strqtype(h->queues[idx].qtype),
+            //        receiver
+            //        );
             row++;
             if (++out_rows >= stat_rows) {
                 break;
@@ -771,14 +798,14 @@ int main(int argc, char *argv[])
         }
 
         row = server_row;
-        attron(A_REVERSE);
-        move(row, 0); hline(' ', 80);
-        if (aggregate_stats) {
-            mvprintw(row++, 0, "COUNT      RQID       SERVICE/S      REQ/S      TRX/S  SERVER");
-        } else {
-            mvprintw(row++, 0, "PID        RQID       SERVICE/S      REQ/S      TRX/S  SERVER");
-        }
-        attroff(A_REVERSE);
+        //attron(A_REVERSE);
+        //move(row, 0); hline(' ', 80);
+        //if (aggregate_stats) {
+        //    mvprintw(row++, 0, "COUNT      RQID       SERVICE/S      REQ/S      TRX/S  SERVER");
+        //} else {
+        //    mvprintw(row++, 0, "PID        RQID       SERVICE/S      REQ/S      TRX/S  SERVER");
+        //}
+        //attroff(A_REVERSE);
 
         for (idx = 0, out_rows = 0; idx < n_server_stats; idx++) {
             char first_col[32];
@@ -793,7 +820,7 @@ int main(int argc, char *argv[])
                 snprintf(first_col, sizeof(first_col), "(%ld)",  server_stats[idx].server->pid);
             }
 
-            mvprintw(row, 0, "%-9s  %-9ld  % 9.2f  % 9.2f  % 9.2f  %-28s",
+            printf("%-9s  %-9ld  % 9.2f  % 9.2f  % 9.2f  %-28s\n",
                     first_col,
                     server_stats[idx].server->rqid,
                     server_stats[idx].reqc,
@@ -801,13 +828,21 @@ int main(int argc, char *argv[])
                     server_stats[idx].n_tran,
                     server_stats[idx].server->name
                     );
+            //mvprintw(row, 0, "%-9s  %-9ld  % 9.2f  % 9.2f  % 9.2f  %-28s",
+            //        first_col,
+            //        server_stats[idx].server->rqid,
+            //        server_stats[idx].reqc,
+            //        server_stats[idx].n_req,
+            //        server_stats[idx].n_tran,
+            //        server_stats[idx].server->name
+            //        );
             row++;
             if (++out_rows >= stat_rows) {
                 break;
             }
         }
 
-        refresh();
+        //refresh();
 
         force_sleep(&h->timestamp, 1);
 
