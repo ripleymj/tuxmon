@@ -792,19 +792,21 @@ int main(int argc, char *argv[])
             //        receiver
             //        );
             row++;
-            if (++out_rows >= stat_rows) {
-                break;
-            }
+            //if (++out_rows >= stat_rows) {
+            //    break;
+            //}
         }
 
         row = server_row;
         //attron(A_REVERSE);
         //move(row, 0); hline(' ', 80);
-        //if (aggregate_stats) {
+        if (aggregate_stats) {
+            printf("COUNT      RQID       SERVICE/S      REQ/S      TRX/S  SERVER\n");
         //    mvprintw(row++, 0, "COUNT      RQID       SERVICE/S      REQ/S      TRX/S  SERVER");
-        //} else {
+        } else {
+            printf("PID        RQID       SERVICE/S      REQ/S      TRX/S  SERVER\n");
         //    mvprintw(row++, 0, "PID        RQID       SERVICE/S      REQ/S      TRX/S  SERVER");
-        //}
+        }
         //attroff(A_REVERSE);
 
         for (idx = 0, out_rows = 0; idx < n_server_stats; idx++) {
@@ -837,9 +839,9 @@ int main(int argc, char *argv[])
             //        server_stats[idx].server->name
             //        );
             row++;
-            if (++out_rows >= stat_rows) {
-                break;
-            }
+            //if (++out_rows >= stat_rows) {
+            //    break;
+            //}
         }
 
         //refresh();
