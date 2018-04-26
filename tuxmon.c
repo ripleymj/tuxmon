@@ -28,8 +28,6 @@
 #include <fml32.h>
 #include <tpadm.h>
 
-//include <ncurses.h>
-
 /*
  * Currently just 2 samples to calculate TPS,
  * should be able to calculate TPM in future
@@ -656,10 +654,6 @@ int main(int argc, char *argv[])
         struct sample *l, *h;
         double period;
         int idx;
-        int row;
-        int stat_rows;
-        int queue_row, server_row;
-        int rows;
         char header[64];
 
         check(poll_mib(high) != -1, "");
@@ -669,12 +663,6 @@ int main(int argc, char *argv[])
 
         period = timestamp_diff(&l->timestamp, &h->timestamp);
         check(calculate_diff(l, h, period) != -1, "Failed to calculate server statistics");
-
-        stat_rows = (rows - 6) / 2;
-        queue_row = 4;
-        server_row = queue_row + 1 + stat_rows;
-
-        row = 0;
 
         snprintf(header, sizeof(header), "%s : %s", h->machine.pmid, h->machine.lmid);
         printf("%-40s ACTIVE M: %-3ld  Q: %-3ld  S: %-3ld\n", header, h->n_act_msgs, h->n_act_queues, h->n_act_servers);
@@ -697,7 +685,6 @@ int main(int argc, char *argv[])
                     xpp(l->machine.n_tranabt, h->machine.n_tranabt, period)
                 );
 
-        row = queue_row;
         printf("MSQID     MSGS    %%FULL                  FROM       TO\n");
 
         for (idx = 0; idx < h->n_queues; idx++) {
@@ -734,10 +721,8 @@ int main(int argc, char *argv[])
                         receiver
                 );
             }
-            row++;
         }
 
-        row = server_row;
         if (aggregate_stats) {
             printf("COUNT      RQID       SERVICE/S      REQ/S      TRX/S  SERVER\n");
         } else {
@@ -768,7 +753,6 @@ int main(int argc, char *argv[])
                         server_stats[idx].server->name
                 );
             }
-            row++;
         }
 
         force_sleep(&h->timestamp, 1);
@@ -777,7 +761,6 @@ int main(int argc, char *argv[])
         high = sample_next_index(high);
     }
 
-done:
     return 0;
 
 error:

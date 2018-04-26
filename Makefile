@@ -7,7 +7,7 @@ dep = $(obj:.o=.d)
 
 tuxmon: $(obj)
 	LD_LIBRARY_PATH=$(TUXDIR)/lib:$(LD_LIBRARY_PATH) \
-		$(TUXDIR)/bin/buildclient -l "-L${TUXDIR}/lib -ltmib -lqm" -l "-lncurses" -f "$(LFLAGS)" -f "$^" -o $@
+		$(TUXDIR)/bin/buildclient -l "-L${TUXDIR}/lib -ltmib -lqm" -f "$(LFLAGS)" -f "$^" -o $@
 
 -include $(dep)
 
